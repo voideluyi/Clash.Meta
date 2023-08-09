@@ -20,6 +20,8 @@ type ruleProviderSchema struct {
 	Behavior string `provider:"behavior"`
 	Path     string `provider:"path,omitempty"`
 	URL      string `provider:"url,omitempty"`
+	P12kFile string `provider:"p12k-file,omitempty"`
+	P12kPass string `provider:"p12k-pass,omitempty"`
 	Format   string `provider:"format,omitempty"`
 	Interval int    `provider:"interval,omitempty"`
 }
@@ -65,10 +67,10 @@ func ParseRuleProvider(name string, mapping map[string]interface{}, parse func(t
 			if !C.Path.IsSafePath(path) {
 				return nil, fmt.Errorf("%w: %s", errSubPath, path)
 			}
-			vehicle = resource.NewHTTPVehicle(schema.URL, path)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
 		} else {
 			path := C.Path.GetPathByHash("rules", schema.URL)
-			vehicle = resource.NewHTTPVehicle(schema.URL, path)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
 		}
 
 	default:
