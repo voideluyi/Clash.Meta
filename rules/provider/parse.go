@@ -16,14 +16,16 @@ var (
 )
 
 type ruleProviderSchema struct {
-	Type     string `provider:"type"`
-	Behavior string `provider:"behavior"`
-	Path     string `provider:"path,omitempty"`
-	URL      string `provider:"url,omitempty"`
-	P12kFile string `provider:"p12k-file,omitempty"`
-	P12kPass string `provider:"p12k-pass,omitempty"`
-	Format   string `provider:"format,omitempty"`
-	Interval int    `provider:"interval,omitempty"`
+	Type       string `provider:"type"`
+	Behavior   string `provider:"behavior"`
+	Path       string `provider:"path,omitempty"`
+	URL        string `provider:"url,omitempty"`
+	P12kFile   string `provider:"p12k-file,omitempty"`
+	P12kPass   string `provider:"p12k-pass,omitempty"`
+	ClientCert string `provider:"client-cert,omitempty"`
+	ClientKey  string `provider:"client-key,omitempty"`
+	Format     string `provider:"format,omitempty"`
+	Interval   int    `provider:"interval,omitempty"`
 }
 
 func ParseRuleProvider(name string, mapping map[string]interface{}, parse func(tp, payload, target string, params []string, subRules map[string][]C.Rule) (parsed C.Rule, parseErr error)) (P.RuleProvider, error) {
@@ -67,10 +69,10 @@ func ParseRuleProvider(name string, mapping map[string]interface{}, parse func(t
 			if !C.Path.IsSafePath(path) {
 				return nil, fmt.Errorf("%w: %s", errSubPath, path)
 			}
-			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass, schema.ClientCert, schema.ClientKey)
 		} else {
 			path := C.Path.GetPathByHash("rules", schema.URL)
-			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass, schema.ClientCert, schema.ClientKey)
 		}
 
 	default:

@@ -31,6 +31,8 @@ type proxyProviderSchema struct {
 	URL           string            `provider:"url,omitempty"`
 	P12kFile      string            `provider:"p12k-file,omitempty"`
 	P12kPass      string            `provider:"p12k-pass,omitempty"`
+	ClientCert    string            `provider:"client-cert,omitempty"`
+	ClientKey     string            `provider:"client-key,omitempty"`
 	Interval      int               `provider:"interval,omitempty"`
 	Filter        string            `provider:"filter,omitempty"`
 	ExcludeFilter string            `provider:"exclude-filter,omitempty"`
@@ -73,10 +75,10 @@ func ParseProxyProvider(name string, mapping map[string]any) (types.ProxyProvide
 			if !C.Path.IsSafePath(path) {
 				return nil, fmt.Errorf("%w: %s", errSubPath, path)
 			}
-			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass, schema.ClientCert, schema.ClientKey)
 		} else {
 			path := C.Path.GetPathByHash("proxies", schema.URL)
-			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass)
+			vehicle = resource.NewHTTPVehicle(schema.URL, path, schema.P12kFile, schema.P12kPass, schema.ClientCert, schema.ClientKey)
 		}
 	default:
 		return nil, fmt.Errorf("%w: %s", errVehicleType, schema.Type)

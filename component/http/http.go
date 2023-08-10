@@ -71,7 +71,7 @@ func HttpRequest(ctx context.Context, url, method string, header map[string][]st
 
 }
 
-func HttpRequestV2(ctx context.Context, url, method string, header map[string][]string, p12kFile string, p12kPass string, body io.Reader) (*http.Response, error) {
+func HttpRequestV2(ctx context.Context, url, method string, header map[string][]string, p12kFile string, p12kPass string, clientCert string, clientKey string, body io.Reader) (*http.Response, error) {
 	method = strings.ToUpper(method)
 	urlRes, err := URL.Parse(url)
 	if err != nil {
@@ -118,6 +118,13 @@ func HttpRequestV2(ctx context.Context, url, method string, header map[string][]
 		}
 
 		cert, err := basetls.X509KeyPair(pemData, pemData)
+		if err != nil {
+			return nil, err
+		}
+		tlsConfig.Certificates = []basetls.Certificate{cert}
+	}
+	if clientCert != "" && clientKey != "" {
+		cert, err := basetls.LoadX509KeyPair(clientCert, clientKey)
 		if err != nil {
 			return nil, err
 		}

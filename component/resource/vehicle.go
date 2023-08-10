@@ -31,10 +31,12 @@ func NewFileVehicle(path string) *FileVehicle {
 }
 
 type HTTPVehicle struct {
-	url      string
-	path     string
-	p12kFile string
-	p12kPass string
+	url        string
+	path       string
+	p12kFile   string
+	p12kPass   string
+	clientCert string
+	clientKey  string
 }
 
 func (h *HTTPVehicle) Url() string {
@@ -53,7 +55,7 @@ func (h *HTTPVehicle) Read() ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*20)
 	defer cancel()
 	//resp, err := clashHttp.HttpRequest(ctx, h.url, http.MethodGet, nil, nil)
-	resp, err := clashHttp.HttpRequestV2(ctx, h.url, http.MethodGet, nil, h.p12kFile, h.p12kPass, nil)
+	resp, err := clashHttp.HttpRequestV2(ctx, h.url, http.MethodGet, nil, h.p12kFile, h.p12kPass, h.clientCert, h.clientKey, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +68,6 @@ func (h *HTTPVehicle) Read() ([]byte, error) {
 	return buf, nil
 }
 
-func NewHTTPVehicle(url string, path string, p12kFile string, p12kPass string) *HTTPVehicle {
-	return &HTTPVehicle{url, path, p12kFile, p12kPass}
+func NewHTTPVehicle(url string, path string, p12kFile string, p12kPass string, clientCert string, clientKey string) *HTTPVehicle {
+	return &HTTPVehicle{url, path, p12kFile, p12kPass, clientCert, clientKey}
 }
